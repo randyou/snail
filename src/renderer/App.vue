@@ -5,11 +5,18 @@
 </template>
 
 <script>
-  export default {
-    name: 'snail'
-  }
+export default {
+  name: 'snail'
+}
 </script>
 
-<style>
-  /* CSS */
+<style lang="scss">
+@import '~font-awesome/css/font-awesome.min.css';
+@import '~bulma/bulma.sass';
+html,
+body,
+#app {
+  height: 100%;
+  overflow: hidden;
+}
 </style>
