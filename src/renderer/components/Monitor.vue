@@ -1,5 +1,5 @@
 <template>
-  <div id="monitor" @drop.prevent.stop="onDrop" @dragover.prevent.stop="onDragover" @dragleave.prevent.stop="onDragleave" draggable="true">
+  <div id="monitor" @drop.prevent.stop="onDrop" @dragover.prevent.stop="onDragover" @dragleave.prevent.stop="onDragleave">
     <Progresser></Progresser>
     <Launcher></Launcher>
   </div>
