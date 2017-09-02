@@ -23,9 +23,9 @@
 <script>
 export default {
   name: 'sidebar',
-  data () {
-    return {
-      route: ''
+  computed: {
+    route () {
+      return this.$router.currentRoute.name
     }
   },
   methods: {
@@ -35,8 +35,6 @@ export default {
       if (target.nodeName.toLowerCase() !== 'a' || !route) {
         return
       }
-
-      this.route = route
       this.$router.push({ name: target.dataset.route })
     }
   }
