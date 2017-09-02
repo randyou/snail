@@ -1,12 +1,20 @@
 <template>
-  <div id="app">
+  <div id="app" @paste="onPaste">
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { clipboard } from 'electron'
+
 export default {
-  name: 'snail'
+  name: 'snail',
+  methods: {
+    onPaste (e) {
+      const magnetLinks = clipboard.readText().split(/\s+/).filter(str => /^magnet:?[^\\"]+/.test(str))
+      console.log(magnetLinks)
+    }
+  }
 }
 </script>
 

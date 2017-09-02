@@ -23,6 +23,7 @@ export default {
       return false
     },
     onDrop (e) {
+      console.log(e.dataTransfer.getData('URL'))
       for (let f of e.dataTransfer.files) {
         console.log(f.path)
       }
