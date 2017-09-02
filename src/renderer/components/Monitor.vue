@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import Progresser from './Monitor/Progresser'
-import Launcher from './Monitor/Launcher'
+import Progresser from './monitor/Progresser'
+import Launcher from './monitor/Launcher'
 
 export default {
   name: 'monitor',
