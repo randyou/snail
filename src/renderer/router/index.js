@@ -8,7 +8,15 @@ export default new Router({
     {
       path: '/',
       name: 'index',
-      component: require('@/components/Index')
+      component: require('@/components/Index'),
+      redirect: 'monitor',
+      children: [
+        {
+          path: 'monitor',
+          name: 'monitor',
+          component: require('@/components/Monitor')
+        }
+      ]
     },
     {
       path: '*',

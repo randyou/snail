@@ -1,7 +1,12 @@
 @import '~bulma/sass/utilities/functions.sass';
 @import '~bulma/sass/utilities/variables.sass';
 
+//sidebar
 $menu-item-active-background-color: $yellow;
 $menu-item-active-color	:$orange;
 $menu-item-color: $grey-lighter;
 $menu-item-hover-background-color: $white-ter;
+
+
+//progress
+$box-background-color: $yellow;

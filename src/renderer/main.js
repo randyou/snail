@@ -14,3 +14,16 @@ new Vue({
   store,
   template: '<App/>'
 }).$mount('#app')
+
+window.ondragover = (e) => {
+  e.preventDefault()
+  return false
+}
+window.ondragleave = (e) => {
+  e.preventDefault()
+  return false
+}
+window.ondrop = (e) => {
+  e.preventDefault()
+  return false
+}

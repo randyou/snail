@@ -1,11 +1,11 @@
 <template>
-  <aside class="menu">
+  <aside  @click.prevent="routeTo" class="menu">
     <p class="menu-label">
       本地下载
     </p>
     <ul class="menu-list">
       <li>
-        <a class="is-active">正在下载</a>
+        <a data-route="monitor" :class="{'is-active':route==='monitor'}">正在下载</a>
       </li>
       <li>
         <a>已完成</a>
@@ -19,4 +19,27 @@
     </p>
   </aside>
 </template>
+
+<script>
+export default {
+  name: 'sidebar',
+  data () {
+    return {
+      route: ''
+    }
+  },
+  methods: {
+    routeTo (e) {
+      const target = e.target
+      const route = target.dataset.route
+      if (target.nodeName.toLowerCase() !== 'a' || !route) {
+        return
+      }
+
+      this.route = route
+      this.$router.push({ name: target.dataset.route })
+    }
+  }
+}
+</script>
 

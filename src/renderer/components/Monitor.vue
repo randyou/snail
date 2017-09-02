@@ -1,0 +1,44 @@
+<template>
+  <div id="monitor" @drop.prevent.stop="onDrop" @dragover.prevent.stop="onDragover" @dragleave.prevent.stop="onDragleave" draggable="true">
+    <Progresser></Progresser>
+    <Launcher></Launcher>
+  </div>
+</template>
+
+<script>
+import Progresser from './Monitor/Progresser'
+import Launcher from './Monitor/Launcher'
+
+export default {
+  name: 'monitor',
+  components: {
+    Progresser,
+    Launcher
+  },
+  methods: {
+    onDragover () {
+      return false
+    },
+    onDragleave () {
+      return false
+    },
+    onDrop (e) {
+      for (let f of e.dataTransfer.files) {
+        console.log(f.path)
+      }
+      return false
+    }
+  }
+}
+</script>
+
+
+<style lang="scss" scoped>
+#monitor {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-flow: column nowrap;
+}
+</style>

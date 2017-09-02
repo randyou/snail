@@ -10,8 +10,8 @@
       <div id="sidebar" class="column is-2">
         <Sidebar></Sidebar>
       </div>
-      <div id="content" class="column">
-
+      <div id="content" class="column is-paddingless">
+        <router-view></router-view>
       </div>
     </div>
   </div>
