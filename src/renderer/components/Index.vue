@@ -55,6 +55,8 @@ export default {
 
     #content {
       flex: 1 0 60.5rem;
+      overflow-y: auto;
+      height: 100%;
     }
   }
 }

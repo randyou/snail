@@ -15,6 +15,16 @@ export default new Router({
           path: 'monitor',
           name: 'monitor',
           component: require('@/components/Monitor')
+        },
+        {
+          path: 'finish',
+          name: 'finish',
+          component: require('@/components/Finish')
+        },
+        {
+          path: 'wastebasket',
+          name: 'wastebasket',
+          component: require('@/components/Wastebasket')
         }
       ]
     },

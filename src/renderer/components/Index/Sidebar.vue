@@ -8,10 +8,10 @@
         <a data-route="monitor" :class="{'is-active':route==='monitor'}">正在下载</a>
       </li>
       <li>
-        <a>已完成</a>
+        <a data-route="finish" :class="{'is-active':route==='finish'}">已完成</a>
       </li>
       <li>
-        <a>废纸篓</a>
+        <a data-route="wastebasket" :class="{'is-active':route==='wastebasket'}">废纸篓</a>
       </li>
     </ul>
     <p class="menu-label">
@@ -25,7 +25,7 @@ export default {
   name: 'sidebar',
   computed: {
     route () {
-      return this.$router.currentRoute.name
+      return this.$route.name
     }
   },
   methods: {

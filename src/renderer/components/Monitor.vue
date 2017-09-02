@@ -36,8 +36,6 @@ export default {
 <style lang="scss" scoped>
 #monitor {
   height: 100%;
-  width: 100%;
-  overflow-y: auto;
   display: flex;
   flex-flow: column nowrap;
 }
