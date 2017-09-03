@@ -1,5 +1,5 @@
 <template>
-  <div id="dropPanel" @click="onClick" >
+  <div id="dropPanel" @click="onClick">
     <input ref="chooseFile" @change="onChange" type="file" name="torrent" accept=".torrent" multiple hidden>
     <span class="icon is-large">
       <i class="fa fa-plus"></i>
@@ -9,20 +9,18 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
+
 export default {
   name: 'launcher',
-  data () {
-    return {
-      files: []
-    }
-  },
   methods: {
     onClick () {
       this.$refs.chooseFile.click()
     },
     onChange (e) {
       const torrentFiles = Array.prototype.filter.call(e.target.files, f => f.path.endsWith('.torrent'))
-      this.files = torrentFiles.map(f => f.path)
+      const files = torrentFiles.map(f => f.path)
+      ipcRenderer.send('got-torrent-file', files)
     }
   }
 }

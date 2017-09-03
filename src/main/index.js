@@ -1,7 +1,7 @@
 'use strict'
 
 import { app, BrowserWindow } from 'electron'
-
+import ipc from './ipc'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -14,6 +14,11 @@ let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
+
+function onReady () {
+  createWindow()
+  ipc()
+}
 
 function createWindow () {
   /**
@@ -32,7 +37,7 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', onReady)
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
