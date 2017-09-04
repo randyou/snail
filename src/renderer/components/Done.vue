@@ -1,10 +1,10 @@
 <template>
   <table class="table is-fullwidth">
     <tbody>
-      <tr>
+      <tr v-for="row in doneList" :key="row.infoHash">
         <th></th>
         <td>
-          <a title="Leicester City F.C.">Leicester City</a>
+          <a title="Leicester City F.C.">{{row.displayName}}</a>
         </td>
         <td>
           <a class="icon is-small">
@@ -21,3 +21,24 @@
     </tbody>
   </table>
 </template>
+
+
+<script>
+export default {
+  name: 'done',
+  data () {
+    return {
+      doneList: []
+    }
+  },
+  created () {
+    this.$electron.ipcRenderer.send('done-list')
+    this.$electron.ipcRenderer.on('done-list', (e, data) => {
+      this.doneList = data
+    })
+  },
+  beforeDestroy () {
+    this.$electron.ipcRenderer.removeAllListeners('done-list')
+  }
+}
+</script>

@@ -38,6 +38,17 @@ function sendDownloadList (e) {
 }
 
 /**
+ * 获取已完成
+ *
+ * @param {any} e
+ */
+function sendDoneList (e) {
+  torrentController.getDoneList((list) => {
+    e.sender.send('done-list', list)
+  })
+}
+
+/**
  * 恢复下载状态
  *
  * @param {any} e
@@ -67,9 +78,12 @@ export default function () {
     if (torrentIds.length > 0) {
       for (let torrentId of torrentIds) {
         torrentController.startTorrenting(torrentId, {}, (state) => {
-          if (!downloadList.find(element => { return element.infoHash === state.infoHash })) {
+          if (state.status === 'downloading' && !downloadList.find(element => { return element.infoHash === state.infoHash })) {
             downloadList.push(state)
-            sendDownloadList(e)
+          }
+          sendDownloadList(e)
+          if (state.status === 'done') {
+            sendDoneList(e)
           }
         })
       }
@@ -127,5 +141,9 @@ export default function () {
       }
     })
     resumeDownload(e)
+  })
+
+  ipcMain.on('done-list', (e) => {
+    sendDoneList(e)
   })
 }

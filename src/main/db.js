@@ -19,18 +19,55 @@ export default {
     })
   },
   /**
-   * 获取progress小于1，并且状态不是deleted的数据
+   * 获取下载中或者停止的state
    *
    * @param {any} cb
    */
-  getAllTorrentState (cb) {
-    db.torrentState.find({ $and: [{ progress: { $lt: 1 } }, {status: {$ne: 'deleted'}}] })
+  getTorrentingOrStopedState (cb) {
+    db.torrentState.find({ $or: [{ status: 'downloading' }, {status: 'stoped'}] })
       .sort({ createdAt: 1 })
       .exec((err, docs) => {
         if (err) {
           throw err
         }
-        cb(docs)
+        if (cb) {
+          cb(docs)
+        }
+      })
+  },
+
+  /**
+   * 获取完成的state
+   *
+   * @param {any} cb
+   */
+  getDoneState (cb) {
+    db.torrentState.find({ status: 'done' })
+      .sort({ updateAt: -1 })
+      .exec((err, docs) => {
+        if (err) {
+          throw err
+        }
+        if (cb) {
+          cb(docs)
+        }
+      })
+  },
+  /**
+   * 获取删除的state
+   *
+   * @param {any} cb
+   */
+  getDeletedState (cb) {
+    db.torrentState.find({ status: 'deleted' })
+      .sort({ updateAt: -1 })
+      .exec((err, docs) => {
+        if (err) {
+          throw err
+        }
+        if (cb) {
+          cb(docs)
+        }
       })
   }
 }

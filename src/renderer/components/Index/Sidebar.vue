@@ -8,7 +8,7 @@
         <a data-route="monitor" :class="{'is-active':route==='monitor'}">正在下载</a>
       </li>
       <li>
-        <a data-route="finish" :class="{'is-active':route==='finish'}">已完成</a>
+        <a data-route="done" :class="{'is-active':route==='done'}">已完成</a>
       </li>
       <li>
         <a data-route="wastebasket" :class="{'is-active':route==='wastebasket'}">废纸篓</a>

@@ -27,6 +27,13 @@ export default {
       if (cb) {
         cb(state)
       }
+      torrent.on('done', () => {
+        state.status = 'done'
+        state.progress = 1
+        db.saveTorrentState(state)
+        torrent.destroy()
+        cb(state)
+      })
     })
   },
 
@@ -47,8 +54,19 @@ export default {
    * @param {any} cb
    */
   getDownloadList (cb) {
-    db.getAllTorrentState(cb)
+    db.getTorrentingOrStopedState(cb)
   },
+
+  getDoneList (cb) {
+    db.getDoneState(cb)
+  },
+
+  /**
+   * 获取torrent
+   *
+   * @param {any} torrentId
+   * @returns
+   */
   getTorrent (torrentId) {
     return webtorrentClient.get(torrentId)
   },
