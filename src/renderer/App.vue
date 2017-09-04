@@ -12,7 +12,7 @@ export default {
   methods: {
     onPaste (e) {
       const magnetLinks = clipboard.readText().split(/\s+/).filter(str => /^magnet:?[^\\"]+/.test(str))
-      console.log(magnetLinks)
+      this.$electron.ipcRenderer.send('new-torrenting', magnetLinks)
     }
   }
 }

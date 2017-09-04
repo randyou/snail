@@ -43,10 +43,15 @@ export default {
       return false
     },
     onDrop (e) {
-      console.log(e.dataTransfer.getData('URL'))
-      for (let f of e.dataTransfer.files) {
-        console.log(f.path)
-      }
+      let torrentIds = []
+      const torrentFiles = Array.prototype.filter.call(e.dataTransfer.files, f => f.path.endsWith('.torrent'))
+      const files = torrentFiles.map(f => f.path)
+      torrentIds = torrentIds.concat(files)
+
+      const magnetLinks = e.dataTransfer.getData('URL').split(/\s+/).filter(str => /^magnet:?[^\\"]+/.test(str))
+      torrentIds = torrentIds.concat(magnetLinks)
+
+      this.$electron.ipcRenderer.send('new-torrenting', torrentIds)
       return false
     }
   },
