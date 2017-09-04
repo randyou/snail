@@ -6,7 +6,8 @@ import config from './config'
 const db = {}
 db.torrentState = new Nedb({
   filename: path.join(config.userData, 'torrentState.db'),
-  autoload: true
+  autoload: true,
+  timestampData: true
 })
 
 export default {
@@ -23,11 +24,13 @@ export default {
    * @param {any} cb
    */
   getAllTorrentState (cb) {
-    db.torrentState.find({ $and: [{ progress: { $lt: 1 } }, {status: {$ne: 'deleted'}}] }, (err, docs) => {
-      if (err) {
-        throw err
-      }
-      cb(docs)
-    })
+    db.torrentState.find({ $and: [{ progress: { $lt: 1 } }, {status: {$ne: 'deleted'}}] })
+      .sort({ createdAt: 1 })
+      .exec((err, docs) => {
+        if (err) {
+          throw err
+        }
+        cb(docs)
+      })
   }
 }
