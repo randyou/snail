@@ -8,12 +8,13 @@ if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
+const vm = new Vue({
   components: { App },
   router,
   store,
   template: '<App/>'
-}).$mount('#app')
+})
+vm.$mount('#app')
 
 window.ondragover = (e) => {
   e.preventDefault()
@@ -26,4 +27,8 @@ window.ondragleave = (e) => {
 window.ondrop = (e) => {
   e.preventDefault()
   return false
+}
+
+window.onbeforeunload = function (e) {
+  vm.$electron.ipcRenderer.send('stop-progress')
 }

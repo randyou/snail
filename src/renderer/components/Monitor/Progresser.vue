@@ -8,14 +8,15 @@
       <div class="media-content">
         <div class="content">
           <p class="title is-4 has-text-primary">
-            {{filename}}
+            {{ displayName }}
           </p>
         </div>
         <nav class="level is-mobile">
           <div class="level-left">
             <a class="level-item">
-              <span class="icon is-small">
-                <i class="fa fa-pause" aria-hidden="true"></i>
+              <span class="icon is-small" @click="toggle(downloadInfo.infoHash||progressInfo.infoHash)">
+                <i v-if="downloadInfo.status==='stoped'" class="fa fa-play" aria-hidden="true"></i>
+                <i v-else class="fa  fa-pause fa-play" aria-hidden="true"></i>
               </span>
             </a>
             <progress class="level-item progress is-primary is-small" :value="progress" max="100"></progress>
@@ -26,19 +27,21 @@
               </span>
             </span>
             <strong class="level-item has-text-primary">{{downloaded}} / {{totalLength}}</strong>
-            <strong class="level-item has-text-primary">{{progressInfo.numPeers}} peer(s)</strong>
-            <span class="level-item">
-              <span class="icon is-small has-text-primary">
-                <i class="fa fa-arrow-down" aria-hidden="true"></i>
+            <template v-if="downloadInfo.status === 'downloading'">
+              <strong class="level-item has-text-primary">{{numPeers}} peer(s)</strong>
+              <span class="level-item">
+                <span class="icon is-small has-text-primary">
+                  <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                </span>
+                <strong class="has-text-primary">{{downloadSpeed}}</strong>
+                &nbsp;
+                <span class="icon is-small has-text-primary">
+                  <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                </span>
+                <strong class="has-text-primary">{{uploadSpeed}}</strong>
               </span>
-              <strong class="has-text-primary">{{downloadSpeed}}</strong>
-              &nbsp;
-              <span class="icon is-small has-text-primary">
-                <i class="fa fa-arrow-up" aria-hidden="true"></i>
-              </span>
-              <strong class="has-text-primary">{{uploadSpeed}}</strong>
-            </span>
-            <strong class="level-item has-text-primary">{{timeRemaining}} remaining</strong>
+              <strong class="level-item has-text-primary">{{timeRemaining}} remaining</strong>
+            </template>
           </div>
         </nav>
       </div>
@@ -47,36 +50,61 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'progresser',
-  props: ['progressInfo'],
+  props: {
+    downloadInfo: {
+      type: Object,
+      required: true
+    }
+  },
   computed: {
-    filename () {
-      if (this.progressInfo.files.length === 0) {
-        return 'Loading...'
+    ...mapState([
+      'progressList'
+    ]),
+    progressInfo () {
+      return this.progressList.data.find(info => info.infoHash === this.downloadInfo.infoHash)
+    },
+    displayName () {
+      let name = this.downloadInfo.displayName
+      if (!name && this.progressInfo) {
+        name = this.progressInfo.displayName
       }
-      return this.progressInfo.files[0].path.split('/')[0]
+      if (!name && this.progressInfo && this.progressInfo.files.length > 0) {
+        name = this.progressInfo.files[0].path.split('/')[0]
+      }
+      return name || 'Loading ...'
     },
     downloadSpeed () {
+      if (!this.progressInfo) {
+        return '0 B/s'
+      }
       return this.computeSpeed(this.progressInfo.downloadSpeed)
     },
     uploadSpeed () {
+      if (!this.progressInfo) {
+        return '0 B/s'
+      }
       return this.computeSpeed(this.progressInfo.uploadSpeed)
     },
     totalLength () {
-      let total = 0
-      for (let f of this.progressInfo.files) {
-        total += f.length
-      }
+      let total = this.progressInfo && this.progressInfo.totalLength ? this.progressInfo.totalLength : this.downloadInfo.totalLength
       return this.computeLength(total)
     },
     downloaded () {
-      return this.computeLength(this.progressInfo.downloaded)
+      let length = this.progressInfo && this.progressInfo.downloaded ? this.progressInfo.downloaded : this.downloadInfo.downloaded
+      return this.computeLength(length)
     },
     progress () {
-      return (this.progressInfo.progress * 100).toFixed(2)
+      let value = this.progressInfo && this.progressInfo.progress ? this.progressInfo.progress : this.downloadInfo.progress
+      return (value * 100).toFixed(2)
     },
     timeRemaining () {
+      if (!this.progressInfo) {
+        return '99 years'
+      }
       let remaining = this.progressInfo.timeRemaining
       if (remaining > 1000 * 60 * 60 * 24) {
         return (remaining / (1000 * 60 * 60 * 24)).toFixed(2) + ' day(s)'
@@ -88,10 +116,16 @@ export default {
         return (remaining / (1000)).toFixed(0) + ' second(s)'
       }
       return '0 seconds'
+    },
+    numPeers () {
+      return this.progressInfo ? this.progressInfo.numPeers : 0
     }
   },
   methods: {
     computeSpeed (speed) {
+      if (!speed) {
+        return '0 B/s'
+      }
       if (speed > 1000000) {
         speed = (speed / 1024 / 1024).toFixed(2)
         return speed + ' MB/s'
@@ -103,6 +137,9 @@ export default {
       }
     },
     computeLength (length) {
+      if (!length) {
+        return '0 B'
+      }
       if (length > 1000000000) {
         length = (length / 1024 / 1024 / 1024).toFixed(2)
         return length + ' GB'
@@ -114,6 +151,19 @@ export default {
         return length + ' KB'
       } else {
         return length + ' B'
+      }
+    },
+    stop (infoHash) {
+      this.$electron.ipcRenderer.send('stop-torrenting', infoHash)
+    },
+    resume (infoHash) {
+      this.$electron.ipcRenderer.send('resume-torrenting', infoHash)
+    },
+    toggle (infoHash) {
+      if (this.downloadInfo.status === 'downloading') {
+        this.stop(infoHash)
+      } else if (this.downloadInfo.status === 'stoped') {
+        this.resume(infoHash)
       }
     }
   }

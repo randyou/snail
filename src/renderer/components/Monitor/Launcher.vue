@@ -9,8 +9,6 @@
 </template>
 
 <script>
-import { ipcRenderer } from 'electron'
-
 export default {
   name: 'launcher',
   methods: {
@@ -20,7 +18,7 @@ export default {
     onChange (e) {
       const torrentFiles = Array.prototype.filter.call(e.target.files, f => f.path.endsWith('.torrent'))
       const files = torrentFiles.map(f => f.path)
-      ipcRenderer.send('got-torrent-file', files)
+      this.$electron.ipcRenderer.send('new-torrenting', files)
     }
   }
 }
