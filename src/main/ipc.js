@@ -34,7 +34,11 @@ function sendProgress (e) {
  * @param {any} e
  */
 function sendDownloadList (e) {
-  e.sender.send('download-list', downloadList)
+  const cb = (list) => {
+    downloadList = list
+    e.sender.send('download-list', downloadList)
+  }
+  torrentController.getDownloadList(cb)
 }
 
 /**
@@ -64,6 +68,11 @@ function resumeDownload (e) {
             dir: element.path,
             displayName: element.displayName,
             status: element.status
+          }, state => {
+            if (state.status === 'done') {
+              sendDoneList(e)
+            }
+            sendDownloadList(e)
           }
         )
       }
@@ -81,21 +90,17 @@ export default function () {
           if (state.status === 'downloading' && !downloadList.find(element => { return element.infoHash === state.infoHash })) {
             downloadList.push(state)
           }
-          sendDownloadList(e)
           if (state.status === 'done') {
             sendDoneList(e)
           }
+          sendDownloadList(e)
         })
       }
     }
   })
   // 获取下载状态
   ipcMain.on('download-list', (e) => {
-    const cb = (list) => {
-      downloadList = list
-      sendDownloadList(e)
-    }
-    torrentController.getDownloadList(cb)
+    sendDownloadList(e)
   })
   // 开始发送progress
   ipcMain.on('start-progress', (e) => {

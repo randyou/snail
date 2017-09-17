@@ -32,7 +32,7 @@ export default {
         state.progress = 1
         db.saveTorrentState(state)
         torrent.destroy()
-        cb(state)
+        cb && cb(state)
       })
     })
   },
