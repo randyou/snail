@@ -151,4 +151,25 @@ export default function () {
   ipcMain.on('done-list', (e) => {
     sendDoneList(e)
   })
+
+  ipcMain.on('delete-torrent', (e, torrentId) => {
+    const progress = torrentController.getProgress().find((progress) => {
+      return progress.infoHash === torrentId
+    })
+    downloadList.forEach(state => {
+      if (state.infoHash === torrentId) {
+        if (progress) {
+          state.displayName = progress.displayName || state.displayName
+          state.files = progress.files
+          state.progress = progress.progress
+          state.downloaded = progress.downloaded
+          state.totalLength = progress.totalLength
+        }
+        state.status = 'deleted'
+        torrentController.saveTorrentState(state)
+      }
+    })
+    torrentController.stopTorrenting(torrentId)
+    sendDownloadList(e)
+  })
 }

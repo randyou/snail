@@ -1,12 +1,12 @@
 <template>
-  <div id="monitor" @drop.prevent.stop="onDrop" @dragover.prevent.stop="onDragover" @dragleave.prevent.stop="onDragleave">
-    <Progresser v-for="info in downloadList" :key="info.infoHash" :downloadInfo="info"></Progresser>
+  <div ref="monitor" id="monitor" @drop.prevent.stop="onDrop" @dragover.prevent.stop="onDragover" @dragleave.prevent.stop="onDragleave">
+    <Progresser :data-infohash="info.infoHash" v-for="info in downloadList" :key="info.infoHash" :downloadInfo="info"></Progresser>
     <Launcher></Launcher>
   </div>
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import { mapActions } from 'vuex'
 import Progresser from './monitor/Progresser'
 import Launcher from './monitor/Launcher'
 
@@ -14,7 +14,8 @@ export default {
   name: 'monitor',
   data () {
     return {
-      downloadList: []
+      downloadList: [],
+      operateInfoHash: ''
     }
   },
   created () {
@@ -26,6 +27,9 @@ export default {
     this.$electron.ipcRenderer.on('progress', (e, data) => {
       this.updateProgressList(data)
     })
+  },
+  mounted () {
+    this.createMenu()
   },
   beforeDestroy () {
     this.$electron.ipcRenderer.send('stop-progress')
@@ -53,6 +57,47 @@ export default {
 
       this.$electron.ipcRenderer.send('new-torrenting', torrentIds)
       return false
+    },
+    createMenu () {
+      const vm = this
+
+      const remote = vm.$electron.remote
+      const Menu = remote.Menu
+      const MenuItem = remote.MenuItem
+      const ipcRenderer = vm.$electron.ipcRenderer
+
+      var menu = new Menu()
+      menu.append(new MenuItem({ label: '删除任务',
+        click: function () {
+          console.log(vm.operateInfoHash)
+          ipcRenderer.send('delete-torrent', vm.operateInfoHash)
+        } }))
+      menu.append(new MenuItem({ label: '删除数据',
+        click: function () {
+
+        }}))
+
+      this.$refs.monitor.addEventListener('contextmenu', function (e) {
+        e.preventDefault()
+        vm.operateInfoHash = ''
+        let target = e.target
+        while (true) {
+          let infoHash = target.dataset ? target.dataset.infohash : ''
+          if (infoHash) {
+            vm.operateInfoHash = infoHash
+            infoHash = ''
+            target = null
+            break
+          }
+          target = target.parentNode
+          if (target.nodeName === 'BODY') {
+            break
+          }
+        }
+        if (vm.operateInfoHash) {
+          menu.popup(remote.getCurrentWindow())
+        }
+      }, false)
     }
   },
   components: {
