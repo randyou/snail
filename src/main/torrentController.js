@@ -1,4 +1,6 @@
 import WebTorrent from 'webtorrent'
+import {shell} from 'electron'
+import path from 'path'
 
 import config from './config'
 import TorrentState from './torrentState'
@@ -92,5 +94,19 @@ export default {
       return
     }
     db.saveTorrentState(state)
+  },
+
+  /**
+   * 删除一条状态
+   *
+   * @param {any} state
+   * @returns
+   */
+  async removeTorrentState (state) {
+    if (!state) {
+      return
+    }
+    shell.moveItemToTrash(path.join(state.path, state.displayName))
+    return db.removeTorrentState(state)
   }
 }

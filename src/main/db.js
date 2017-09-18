@@ -54,7 +54,7 @@ export default {
       })
   },
   /**
-   * 获取删除的state
+   * 获取状态为deleted的state
    *
    * @param {any} cb
    */
@@ -69,5 +69,25 @@ export default {
           cb(docs)
         }
       })
+  },
+  /**
+   * 删除state
+   *
+   * @param {any} state
+   * @returns
+   */
+  async removeTorrentState (state) {
+    const promise = new Promise((resolve, reject) => {
+      db.torrentState.remove({
+        _id: state._id
+      }, {}, (err, ret) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(ret)
+        }
+      })
+    })
+    return promise
   }
 }

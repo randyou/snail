@@ -172,4 +172,16 @@ export default function () {
     torrentController.stopTorrenting(torrentId)
     sendDownloadList(e)
   })
+
+  ipcMain.on('remove-torrent', (e, torrentId) => {
+    const state = downloadList.find(state => {
+      return state.infoHash === torrentId
+    })
+    torrentController.stopTorrenting(torrentId)
+    torrentController.removeTorrentState(state).then(() => {
+      sendDownloadList(e)
+    }).catch((err) => {
+      console.log(err)
+    })
+  })
 }

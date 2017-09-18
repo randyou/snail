@@ -69,12 +69,11 @@ export default {
       var menu = new Menu()
       menu.append(new MenuItem({ label: '删除任务',
         click: function () {
-          console.log(vm.operateInfoHash)
           ipcRenderer.send('delete-torrent', vm.operateInfoHash)
         } }))
-      menu.append(new MenuItem({ label: '删除数据',
+      menu.append(new MenuItem({ label: '彻底删除',
         click: function () {
-
+          ipcRenderer.send('remove-torrent', vm.operateInfoHash)
         }}))
 
       this.$refs.monitor.addEventListener('contextmenu', function (e) {
