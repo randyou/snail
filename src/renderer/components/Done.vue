@@ -4,7 +4,7 @@
       <tr v-for="row in doneList" :key="row.infoHash" :data-infohash="row.infoHash">
         <th></th>
         <td>
-          <a title="Leicester City F.C.">{{row.displayName}}</a>
+          <a :title="row.displayName">{{row.displayName}}</a>
         </td>
         <td>
           <a class="icon is-small">
