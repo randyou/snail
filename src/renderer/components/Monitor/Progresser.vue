@@ -175,8 +175,11 @@ export default {
     margin-bottom: 0.2rem;
   }
 
+  .media-content {
+    width: 100%;
+  }
+
   .title {
-    width: 50rem;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden
