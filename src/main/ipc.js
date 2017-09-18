@@ -237,6 +237,19 @@ export default function () {
     })
   })
 
+  ipcMain.on('delete-deleted', (e, torrentId) => {
+    torrentController.getDeletedList().then((list) => {
+      const state = list.find(state => state.infoHash === torrentId)
+      torrentController.removeTorrentState(state, false).then(() => {
+        sendDeletedList(e)
+      }).catch((err) => {
+        console.log(err)
+      })
+    }).catch((err) => {
+      console.log(err)
+    })
+  })
+
   ipcMain.on('remove-deleted', (e, torrentId) => {
     torrentController.getDeletedList().then((list) => {
       const state = list.find(state => state.infoHash === torrentId)

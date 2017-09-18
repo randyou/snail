@@ -46,6 +46,10 @@ export default {
         click: function () {
           ipcRenderer.send('resume-deleted', vm.operateInfoHash)
         } }))
+      menu.append(new MenuItem({ label: '删除记录',
+        click: function () {
+          ipcRenderer.send('delete-deleted', vm.operateInfoHash)
+        } }))
       menu.append(new MenuItem({ label: '彻底删除',
         click: function () {
           ipcRenderer.send('remove-deleted', vm.operateInfoHash)

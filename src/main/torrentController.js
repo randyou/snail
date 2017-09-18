@@ -100,13 +100,14 @@ export default {
    * 删除一条状态
    *
    * @param {any} state
+   * @param {boolean} [removeData=true]
    * @returns
    */
-  async removeTorrentState (state) {
+  async removeTorrentState (state, removeData = true) {
     if (!state) {
       return
     }
-    shell.moveItemToTrash(path.join(state.path, state.displayName))
+    removeData && shell.moveItemToTrash(path.join(state.path, state.displayName))
     return db.removeTorrentState(state)
   },
 
