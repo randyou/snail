@@ -1,10 +1,6 @@
 <template>
   <div class="box is-radiusless">
     <article class="media">
-      <div class="media-left">
-        <figure class="image is-64x64">
-        </figure>
-      </div>
       <div class="media-content">
         <div class="content">
           <p class="title is-4 has-text-primary">
