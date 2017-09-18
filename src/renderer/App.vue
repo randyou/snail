@@ -26,6 +26,7 @@ body,
 #app {
   height: 100%;
   overflow: hidden;
-  transform: translateZ(0)
+  transform: translateZ(0);
+  user-select: none;
 }
 </style>

@@ -25,9 +25,13 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 580,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    minWidth: 1000,
+    minHeight: 580,
+    defaultEncoding: 'utf-8',
+    title: 'Snail'
   })
 
   mainWindow.loadURL(winURL)
