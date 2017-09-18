@@ -227,12 +227,13 @@ export default function () {
   })
 
   ipcMain.on('resume-deleted', (e, torrentId) => {
-    torrentController.startTorrenting(torrentId, {}, (state) => {
-      if (state.status === 'done') {
-        sendDoneList(e)
-      }
-      sendDownloadList(e)
-      sendDeletedList(e)
+    torrentController.getDeletedList().then(list => {
+      const state = list.find(state => state.infoHash === torrentId)
+      state.status = 'downloading'
+      torrentController.saveTorrentState(state).then(() => {
+        resumeDownload(e)
+        sendDeletedList(e)
+      })
     })
   })
 
