@@ -108,5 +108,14 @@ export default {
     }
     shell.moveItemToTrash(path.join(state.path, state.displayName))
     return db.removeTorrentState(state)
+  },
+
+  /**
+   * 获取deleted状态列表
+   *
+   * @returns
+   */
+  async getDeletedList () {
+    return db.getDeletedState()
   }
 }

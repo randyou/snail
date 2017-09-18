@@ -53,22 +53,24 @@ export default {
         }
       })
   },
+
   /**
    * 获取状态为deleted的state
    *
-   * @param {any} cb
+   * @returns
    */
-  getDeletedState (cb) {
-    db.torrentState.find({ status: 'deleted' })
-      .sort({ updateAt: -1 })
-      .exec((err, docs) => {
-        if (err) {
-          throw err
-        }
-        if (cb) {
-          cb(docs)
-        }
-      })
+  getDeletedState () {
+    return new Promise((resolve, reject) => {
+      db.torrentState.find({ status: 'deleted' })
+        .sort({ updateAt: -1 })
+        .exec((err, docs) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(docs)
+          }
+        })
+    })
   },
   /**
    * 删除state

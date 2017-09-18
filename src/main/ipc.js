@@ -53,6 +53,19 @@ function sendDoneList (e) {
 }
 
 /**
+ * 发送删除列表
+ *
+ * @param {any} e
+ */
+function sendDeletedList (e) {
+  torrentController.getDeletedList().then((list) => {
+    e.sender.send('deleted-list', list)
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
+/**
  * 恢复下载状态
  *
  * @param {any} e
@@ -198,11 +211,40 @@ export default function () {
     torrentController.getDoneList((list) => {
       const state = list.find(state => state.infoHash === torrentId)
       torrentController.removeTorrentState(state).then(() => {
-        sendDownloadList(e)
+        sendDoneList(e)
       }).catch((err) => {
         console.log(err)
       })
-      sendDoneList(e)
+    })
+  })
+
+  ipcMain.on('deleted-list', (e) => {
+    sendDeletedList(e)
+  })
+
+  ipcMain.on('resume-deleted', (e, torrentId) => {
+    torrentController.startTorrenting(torrentId, {}, (state) => {
+      if (state.status === 'downloading' && !downloadList.find(element => { return element.infoHash === state.infoHash })) {
+        downloadList.push(state)
+      }
+      if (state.status === 'done') {
+        sendDoneList(e)
+      }
+      sendDownloadList(e)
+      sendDeletedList(e)
+    })
+  })
+
+  ipcMain.on('remove-deleted', (e, torrentId) => {
+    torrentController.getDeletedList().then((list) => {
+      const state = list.find(state => state.infoHash === torrentId)
+      torrentController.removeTorrentState(state).then(() => {
+        sendDeletedList(e)
+      }).catch((err) => {
+        console.log(err)
+      })
+    }).catch((err) => {
+      console.log(err)
     })
   })
 }
