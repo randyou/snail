@@ -7,13 +7,13 @@
           <a :title="row.displayName">{{row.displayName}}</a>
         </td>
         <td>
-          <a class="icon is-small">
+          <a class="icon is-small" @click="openFile(row)">
             <i v-if="true" class="fa fa-play-circle" aria-hidden="true"></i>
             <i v-else class="fa fa-file" aria-hidden="true"></i>
           </a>
         </td>
         <td>
-          <a class="icon is-small">
+          <a class="icon is-small" @click="showInFinder(row)">
             <i class="fa fa-folder-open" aria-hidden="true"></i>
           </a>
         </td>
@@ -22,8 +22,9 @@
   </table>
 </template>
 
-
 <script>
+import path from 'path'
+
 export default {
   name: 'done',
   data () {
@@ -88,6 +89,14 @@ export default {
           menu.popup(remote.getCurrentWindow())
         }
       }, false)
+    },
+    showInFinder (file) {
+      const fullPath = path.join(file.path, file.displayName)
+      this.$electron.shell.showItemInFolder(fullPath)
+    },
+    openFile (file) {
+      const fullPath = path.join(file.path, file.displayName)
+      this.$electron.shell.openItem(fullPath)
     }
   }
 }
