@@ -48,6 +48,7 @@ nav {
 
   .title {
     margin-left: 5px;
+    user-select: none;
   }
 
   .level-right {

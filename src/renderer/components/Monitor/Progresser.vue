@@ -30,7 +30,7 @@
                   <i class="fa fa-arrow-down" aria-hidden="true"></i>
                 </span>
                 <strong class="has-text-primary">{{downloadSpeed}}</strong>
-                &nbsp;
+                <p>&nbsp;</p>
                 <span class="icon is-small has-text-primary">
                   <i class="fa fa-arrow-up" aria-hidden="true"></i>
                 </span>
@@ -184,6 +184,11 @@ export default {
 
   progress {
     width: 3rem;
+  }
+
+  p,
+  strong {
+    user-select: none;
   }
 }
 </style>

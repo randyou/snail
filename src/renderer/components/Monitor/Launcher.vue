@@ -35,5 +35,9 @@ export default {
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+
+  p {
+    user-select: none;
+  }
 }
 </style>

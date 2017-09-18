@@ -86,6 +86,10 @@ table {
   td {
     white-space: nowrap;
     text-overflow: ellipsis;
+
+    a[title] {
+      user-select: none;
+    }
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <aside  @click.prevent="routeTo" class="menu">
+  <aside @click.prevent="routeTo" class="menu">
     <p class="menu-label">
       本地下载
     </p>
@@ -41,3 +41,9 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped>
+p,
+a {
+  user-select: none;
+}
+</style>

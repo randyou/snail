@@ -54,14 +54,18 @@ export default {
       const ipcRenderer = vm.$electron.ipcRenderer
 
       var menu = new Menu()
-      menu.append(new MenuItem({ label: '删除任务',
+      menu.append(new MenuItem({
+        label: '删除任务',
         click: function () {
           ipcRenderer.send('delete-done', vm.operateInfoHash)
-        } }))
-      menu.append(new MenuItem({ label: '彻底删除',
+        }
+      }))
+      menu.append(new MenuItem({
+        label: '彻底删除',
         click: function () {
           ipcRenderer.send('remove-done', vm.operateInfoHash)
-        }}))
+        }
+      }))
 
       this.$refs.table.addEventListener('contextmenu', function (e) {
         e.preventDefault()
@@ -94,6 +98,10 @@ table {
   td {
     white-space: nowrap;
     text-overflow: ellipsis;
+
+    a[title] {
+      user-select: none;
+    }
   }
 }
 </style>
