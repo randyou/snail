@@ -1,6 +1,6 @@
 <template>
   <div ref="monitor" id="monitor" @drop.prevent.stop="onDrop" @dragover.prevent.stop="onDragover" @dragleave.prevent.stop="onDragleave">
-    <Progresser :data-infohash="info.infoHash" v-for="info in downloadList" :key="info.infoHash" :downloadInfo="info"></Progresser>
+    <Progresser :data-infohash="info.infoHash" v-for="info in downloadList" :key="info.infoHash" :downloadInfo="info" @dblclick.native="toggleStatus(info)"></Progresser>
     <Launcher></Launcher>
   </div>
 </template>
@@ -97,6 +97,19 @@ export default {
           menu.popup(remote.getCurrentWindow())
         }
       }, false)
+    },
+    stop (infoHash) {
+      this.$electron.ipcRenderer.send('stop-torrenting', infoHash)
+    },
+    resume (infoHash) {
+      this.$electron.ipcRenderer.send('resume-torrenting', infoHash)
+    },
+    toggleStatus (state) {
+      if (state.status === 'downloading') {
+        this.stop(state.infoHash)
+      } else if (state.status === 'stoped') {
+        this.resume(state.infoHash)
+      }
     }
   },
   components: {
