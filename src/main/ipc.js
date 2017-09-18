@@ -184,4 +184,25 @@ export default function () {
       console.log(err)
     })
   })
+
+  ipcMain.on('delete-done', (e, torrentId) => {
+    torrentController.getDoneList((list) => {
+      const state = list.find(state => state.infoHash === torrentId)
+      state.status = 'deleted'
+      torrentController.saveTorrentState(state)
+      sendDoneList(e)
+    })
+  })
+
+  ipcMain.on('remove-done', (e, torrentId) => {
+    torrentController.getDoneList((list) => {
+      const state = list.find(state => state.infoHash === torrentId)
+      torrentController.removeTorrentState(state).then(() => {
+        sendDownloadList(e)
+      }).catch((err) => {
+        console.log(err)
+      })
+      sendDoneList(e)
+    })
+  })
 }

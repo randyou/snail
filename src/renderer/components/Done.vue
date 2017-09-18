@@ -1,7 +1,7 @@
 <template>
-  <table class="table is-fullwidth">
+  <table ref="table" class="table is-fullwidth">
     <tbody>
-      <tr v-for="row in doneList" :key="row.infoHash">
+      <tr v-for="row in doneList" :key="row.infoHash" :data-infohash="row.infoHash">
         <th></th>
         <td>
           <a title="Leicester City F.C.">{{row.displayName}}</a>
@@ -28,7 +28,8 @@ export default {
   name: 'done',
   data () {
     return {
-      doneList: []
+      doneList: [],
+      operateInfoHash: ''
     }
   },
   created () {
@@ -37,8 +38,62 @@ export default {
       this.doneList = data
     })
   },
+  mounted () {
+    this.createMenu()
+  },
   beforeDestroy () {
     this.$electron.ipcRenderer.removeAllListeners('done-list')
+  },
+  methods: {
+    createMenu () {
+      const vm = this
+
+      const remote = vm.$electron.remote
+      const Menu = remote.Menu
+      const MenuItem = remote.MenuItem
+      const ipcRenderer = vm.$electron.ipcRenderer
+
+      var menu = new Menu()
+      menu.append(new MenuItem({ label: '删除任务',
+        click: function () {
+          ipcRenderer.send('delete-done', vm.operateInfoHash)
+        } }))
+      menu.append(new MenuItem({ label: '彻底删除',
+        click: function () {
+          ipcRenderer.send('remove-done', vm.operateInfoHash)
+        }}))
+
+      this.$refs.table.addEventListener('contextmenu', function (e) {
+        e.preventDefault()
+        vm.operateInfoHash = ''
+        let target = e.target
+        while (true) {
+          let infoHash = target.dataset ? target.dataset.infohash : ''
+          if (infoHash) {
+            vm.operateInfoHash = infoHash
+            infoHash = ''
+            target = null
+            break
+          }
+          target = target.parentNode
+          if (target.nodeName === 'BODY') {
+            break
+          }
+        }
+        if (vm.operateInfoHash) {
+          menu.popup(remote.getCurrentWindow())
+        }
+      }, false)
+    }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+table {
+  td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+</style>

@@ -183,7 +183,6 @@ export default {
     width: 50rem;
     white-space: nowrap;
     text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
     overflow: hidden
   }
 
