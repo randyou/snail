@@ -200,16 +200,19 @@ export default function () {
   })
 
   ipcMain.on('delete-done', (e, torrentId) => {
-    torrentController.getDoneList((list) => {
+    torrentController.getDoneList().then(list => {
       const state = list.find(state => state.infoHash === torrentId)
       state.status = 'deleted'
-      torrentController.saveTorrentState(state)
-      sendDoneList(e)
+      torrentController.saveTorrentState(state).then(() => {
+        sendDoneList(e)
+      }).catch((err) => {
+        console.log(err)
+      })
     })
   })
 
   ipcMain.on('remove-done', (e, torrentId) => {
-    torrentController.getDoneList((list) => {
+    torrentController.getDoneList().then((list) => {
       const state = list.find(state => state.infoHash === torrentId)
       torrentController.removeTorrentState(state).then(() => {
         sendDoneList(e)
