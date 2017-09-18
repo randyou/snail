@@ -34,7 +34,6 @@ function sendProgress (e) {
  */
 function sendDownloadList (e) {
   torrentController.getDownloadList().then((list) => {
-    console.log(list)
     e.sender.send('download-list', list)
   }).catch(err => {
     console.log(err)
@@ -152,23 +151,14 @@ export default function () {
 
   // 恢复下载
   ipcMain.on('resume-torrenting', (e, torrentId) => {
-    const torrent = torrentController.getTorrent(torrentId)
-    if (!torrent) {
-      torrentController.startTorrenting(torrentId, {}, (state) => {
-        if (state.status === 'done') {
-          sendDoneList(e)
-        }
+    torrentController.getDownloadList().then(list => {
+      const state = list.find(state => state.infoHash === torrentId)
+      state.status = 'downloading'
+      torrentController.saveTorrentState(state).then(() => {
+        resumeDownload(e)
         sendDownloadList(e)
       })
-    }
-    // torrentController.getDownloadList().then(list => {
-    //   const state = list.find(state => state.infoHash === torrentId)
-    //   if (state) {
-    //     state.status = 'downloading'
-    //     torrentController.saveTorrentState(state)
-    //     resumeDownload(e)
-    //   }
-    // })
+    })
   })
 
   ipcMain.on('done-list', (e) => {

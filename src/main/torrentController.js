@@ -26,7 +26,6 @@ export default {
         state.displayName = displayName
       }
       db.saveTorrentState(state).then(() => {
-        console.log(state)
         cb && cb(state)
       })
       torrent.on('done', () => {
