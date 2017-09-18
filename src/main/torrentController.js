@@ -37,6 +37,7 @@ export default {
           console.log(err)
         })
         torrent.destroy()
+        shell.beep()
       })
     })
   },
