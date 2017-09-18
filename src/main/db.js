@@ -11,11 +11,20 @@ db.torrentState = new Nedb({
 })
 
 export default {
+  /**
+   * 保存状态
+   *
+   * @param {any} torrentState
+   * @returns
+   */
   saveTorrentState (torrentState) {
-    db.torrentState.update({ infoHash: torrentState.infoHash }, torrentState, { upsert: true }, (err, numAffected, affectedDocuments, upsert) => {
-      if (err) {
-        throw err
-      }
+    return new Promise((resolve, reject) => {
+      db.torrentState.update({ infoHash: torrentState.infoHash }, torrentState, { upsert: true }, (err, numAffected, affectedDocuments, upsert) => {
+        err ? reject(err) : resolve({
+          numAffected,
+          affectedDocuments,
+          upsert})
+      })
     })
   },
   /**
@@ -23,35 +32,37 @@ export default {
    *
    * @param {any} cb
    */
-  getTorrentingOrStopedState (cb) {
-    db.torrentState.find({ $or: [{ status: 'downloading' }, {status: 'stoped'}] })
-      .sort({ createdAt: 1 })
-      .exec((err, docs) => {
-        if (err) {
-          throw err
-        }
-        if (cb) {
-          cb(docs)
-        }
-      })
+  getTorrentingOrStopedState () {
+    return new Promise((resolve, reject) => {
+      db.torrentState.find({ $or: [{ status: 'downloading' }, {status: 'stoped'}] })
+        .sort({ createdAt: 1 })
+        .exec((err, docs) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(docs)
+          }
+        })
+    })
   },
 
   /**
    * 获取完成的state
    *
-   * @param {any} cb
+   * @returns
    */
-  getDoneState (cb) {
-    db.torrentState.find({ status: 'done' })
-      .sort({ updateAt: -1 })
-      .exec((err, docs) => {
-        if (err) {
-          throw err
-        }
-        if (cb) {
-          cb(docs)
-        }
-      })
+  getDoneState () {
+    return new Promise((resolve, reject) => {
+      db.torrentState.find({ status: 'done' })
+        .sort({ updateAt: -1 })
+        .exec((err, docs) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(docs)
+          }
+        })
+    })
   },
 
   /**

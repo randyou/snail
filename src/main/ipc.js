@@ -2,7 +2,6 @@ import { ipcMain } from 'electron'
 
 import torrentController from './torrentController'
 
-let downloadList = []
 let progress = false
 
 /**
@@ -34,11 +33,12 @@ function sendProgress (e) {
  * @param {any} e
  */
 function sendDownloadList (e) {
-  const cb = (list) => {
-    downloadList = list
-    e.sender.send('download-list', downloadList)
-  }
-  torrentController.getDownloadList(cb)
+  torrentController.getDownloadList().then((list) => {
+    console.log(list)
+    e.sender.send('download-list', list)
+  }).catch(err => {
+    console.log(err)
+  })
 }
 
 /**
@@ -47,8 +47,10 @@ function sendDownloadList (e) {
  * @param {any} e
  */
 function sendDoneList (e) {
-  torrentController.getDoneList((list) => {
+  torrentController.getDoneList().then(list => {
     e.sender.send('done-list', list)
+  }).catch(err => {
+    console.log(err)
   })
 }
 
@@ -71,10 +73,8 @@ function sendDeletedList (e) {
  * @param {any} e
  */
 function resumeDownload (e) {
-  const cb = (list) => {
-    downloadList = list
-    sendDownloadList(e)
-    downloadList.forEach((element) => {
+  torrentController.getDownloadList().then((list) => {
+    list.forEach((element) => {
       if (element.status === 'downloading' && !torrentController.getTorrent(element.infoHash)) {
         torrentController.startTorrenting(element.magnetURI || element.infoHash,
           {
@@ -90,25 +90,25 @@ function resumeDownload (e) {
         )
       }
     }, this)
-  }
-  torrentController.getDownloadList(cb)
+  }).catch(err => {
+    console.log(err)
+  })
 }
 
 export default function () {
   // 开始新的torrent
   ipcMain.on('new-torrenting', (e, torrentIds) => {
     if (torrentIds.length > 0) {
-      for (let torrentId of torrentIds) {
-        torrentController.startTorrenting(torrentId, {}, (state) => {
-          if (state.status === 'downloading' && !downloadList.find(element => { return element.infoHash === state.infoHash })) {
-            downloadList.push(state)
-          }
-          if (state.status === 'done') {
-            sendDoneList(e)
-          }
-          sendDownloadList(e)
-        })
-      }
+      torrentController.getDownloadList().then(list => {
+        for (let torrentId of torrentIds) {
+          torrentController.startTorrenting(torrentId, {}, (state) => {
+            if (state.status === 'done') {
+              sendDoneList(e)
+            }
+            sendDownloadList(e)
+          })
+        }
+      })
     }
   })
   // 获取下载状态
@@ -133,32 +133,42 @@ export default function () {
     const progress = torrentController.getProgress().find((progress) => {
       return progress.infoHash === torrentId
     })
-    downloadList.forEach(state => {
-      if (state.infoHash === torrentId) {
-        if (progress) {
-          state.displayName = progress.displayName || state.displayName
-          state.files = progress.files
-          state.progress = progress.progress
-          state.downloaded = progress.downloaded
-          state.totalLength = progress.totalLength
-        }
-        state.status = 'stoped'
-        torrentController.saveTorrentState(state)
+    torrentController.getDownloadList().then(list => {
+      const state = list.find(state => state.infoHash === torrentId)
+      state.status = 'stoped'
+      if (progress) {
+        state.displayName = progress.displayName || state.displayName
+        state.files = progress.files
+        state.progress = progress.progress
+        state.downloaded = progress.downloaded
+        state.totalLength = progress.totalLength
       }
+      torrentController.saveTorrentState(state).then(() => {
+        sendDownloadList(e)
+      })
+      torrentController.stopTorrenting(torrentId)
     })
-    torrentController.stopTorrenting(torrentId)
-    e.sender.send('download-list', downloadList)
   })
 
   // 恢复下载
   ipcMain.on('resume-torrenting', (e, torrentId) => {
-    downloadList.forEach(state => {
-      if (state.infoHash === torrentId) {
-        state.status = 'downloading'
-        torrentController.saveTorrentState(state)
-      }
-    })
-    resumeDownload(e)
+    const torrent = torrentController.getTorrent(torrentId)
+    if (!torrent) {
+      torrentController.startTorrenting(torrentId, {}, (state) => {
+        if (state.status === 'done') {
+          sendDoneList(e)
+        }
+        sendDownloadList(e)
+      })
+    }
+    // torrentController.getDownloadList().then(list => {
+    //   const state = list.find(state => state.infoHash === torrentId)
+    //   if (state) {
+    //     state.status = 'downloading'
+    //     torrentController.saveTorrentState(state)
+    //     resumeDownload(e)
+    //   }
+    // })
   })
 
   ipcMain.on('done-list', (e) => {
@@ -169,32 +179,33 @@ export default function () {
     const progress = torrentController.getProgress().find((progress) => {
       return progress.infoHash === torrentId
     })
-    downloadList.forEach(state => {
-      if (state.infoHash === torrentId) {
-        if (progress) {
-          state.displayName = progress.displayName || state.displayName
-          state.files = progress.files
-          state.progress = progress.progress
-          state.downloaded = progress.downloaded
-          state.totalLength = progress.totalLength
-        }
-        state.status = 'deleted'
-        torrentController.saveTorrentState(state)
+    torrentController.getDownloadList().then(list => {
+      const state = list.find(state => state.infoHash === torrentId)
+      state.status = 'deleted'
+      if (progress) {
+        state.displayName = progress.displayName || state.displayName
+        state.files = progress.files
+        state.progress = progress.progress
+        state.downloaded = progress.downloaded
+        state.totalLength = progress.totalLength
       }
+      torrentController.saveTorrentState(state)
+      torrentController.stopTorrenting(torrentId)
+      sendDownloadList(e)
     })
-    torrentController.stopTorrenting(torrentId)
-    sendDownloadList(e)
   })
 
   ipcMain.on('remove-torrent', (e, torrentId) => {
-    const state = downloadList.find(state => {
-      return state.infoHash === torrentId
-    })
-    torrentController.stopTorrenting(torrentId)
-    torrentController.removeTorrentState(state).then(() => {
-      sendDownloadList(e)
-    }).catch((err) => {
-      console.log(err)
+    torrentController.getDownloadList().then(list => {
+      const state = list.find(state => {
+        return state.infoHash === torrentId
+      })
+      torrentController.stopTorrenting(torrentId)
+      torrentController.removeTorrentState(state).then(() => {
+        sendDownloadList(e)
+      }).catch((err) => {
+        console.log(err)
+      })
     })
   })
 
@@ -224,9 +235,6 @@ export default function () {
 
   ipcMain.on('resume-deleted', (e, torrentId) => {
     torrentController.startTorrenting(torrentId, {}, (state) => {
-      if (state.status === 'downloading' && !downloadList.find(element => { return element.infoHash === state.infoHash })) {
-        downloadList.push(state)
-      }
       if (state.status === 'done') {
         sendDoneList(e)
       }

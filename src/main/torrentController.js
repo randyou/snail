@@ -25,16 +25,19 @@ export default {
       if (displayName) {
         state.displayName = displayName
       }
-      db.saveTorrentState(state)
-      if (cb) {
-        cb(state)
-      }
+      db.saveTorrentState(state).then(() => {
+        console.log(state)
+        cb && cb(state)
+      })
       torrent.on('done', () => {
         state.status = 'done'
         state.progress = 1
-        db.saveTorrentState(state)
+        db.saveTorrentState(state).then(() => {
+          cb && cb(state)
+        }).catch(err => {
+          console.log(err)
+        })
         torrent.destroy()
-        cb && cb(state)
       })
     })
   },
@@ -50,17 +53,18 @@ export default {
       torrent.destroy()
     }
   },
+
   /**
    * 获取保存的下载状态
    *
-   * @param {any} cb
+   * @returns
    */
-  getDownloadList (cb) {
-    db.getTorrentingOrStopedState(cb)
+  getDownloadList () {
+    return db.getTorrentingOrStopedState()
   },
 
-  getDoneList (cb) {
-    db.getDoneState(cb)
+  getDoneList () {
+    return db.getDoneState()
   },
 
   /**
@@ -90,10 +94,7 @@ export default {
    * @param {any} state
    */
   saveTorrentState (state) {
-    if (!state) {
-      return
-    }
-    db.saveTorrentState(state)
+    return db.saveTorrentState(state)
   },
 
   /**
