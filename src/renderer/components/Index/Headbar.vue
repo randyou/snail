@@ -13,32 +13,46 @@
     <!-- Right side -->
     <div class="level-right">
       <p class="level-item">
-        <a href="#" target="_blank">
+        <a @click="openGithub">
           <span class="icon" style="color: #333;">
             <i class="fa fa-github"></i>
           </span>
         </a>
 
       </p>
-      <p class="level-item">
-        <a href="#" target="_blank">
-          <span class="icon" style="color: #55acee;">
-            <i class="fa fa-twitter"></i>
-          </span>
-        </a>
-      </p>
+      <!-- <p class="level-item">
+          <a href="#" target="_blank">
+            <span class="icon" style="color: #55acee;">
+              <i class="fa fa-twitter"></i>
+            </span>
+          </a>
+        </p> -->
     </div>
   </nav>
 </template>
+
+<script>
+export default {
+  name: 'headbar',
+  methods: {
+    openGithub () {
+      this.$electron.shell.openExternal('https://github.com/randyou/snail')
+    }
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 nav {
   height: 100%;
 
-.title{
-  margin-left:5px;
-}
+  .title {
+    margin-left: 5px;
+  }
 
+  .level-right {
+    margin-right: 1rem;
+  }
 }
 </style>
 

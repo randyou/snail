@@ -26,5 +26,6 @@ body,
 #app {
   height: 100%;
   overflow: hidden;
+  transform: translateZ(0)
 }
 </style>
