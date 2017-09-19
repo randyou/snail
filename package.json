@@ -21,7 +21,7 @@
   },
   "build": {
     "productName": "Snail",
-    "appId": "org.simulatedgreg.electron-vue",
+    "appId": "randyou",
     "directories": {
       "output": "build"
     },
