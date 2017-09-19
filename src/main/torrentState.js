@@ -22,7 +22,7 @@ export default class TorrentState {
         progress: file.progress
       }
     })
-    this.displayName = this.files.length > 0 ? this.files[0].path.split('/')[0] : undefined
+    this.displayName = this.files.length > 0 ? this.files[0].path.split(require('path').sep)[0] : undefined
     this.totalLength = torrent.files.reduce((length, file) => {
       if (file) {
         length += file.length

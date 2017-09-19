@@ -28,7 +28,7 @@ export default class Progress {
         progress: file.progress
       }
     })
-    this.displayName = torrent.files.length > 0 ? torrent.files[0].path.split('/')[0] : undefined
+    this.displayName = torrent.files.length > 0 ? torrent.files[0].path.split(require('path').sep)[0] : undefined
     this.totalLength = torrent.files.reduce((length, file) => {
       if (file) {
         length += file.length
