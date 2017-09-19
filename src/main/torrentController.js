@@ -6,6 +6,7 @@ import config from './config'
 import TorrentState from './torrentState'
 import Progress from './progress'
 import db from './db'
+import notification from './notification'
 
 const downloadsDir = config.prevDownloadsDir
 
@@ -37,7 +38,7 @@ export default {
           console.log(err)
         })
         torrent.destroy()
-        shell.beep()
+        notification.notify('下载完成', state.displayName, state)
       })
     })
   },

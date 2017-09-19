@@ -23,7 +23,8 @@ let whiteListedModules = ['vue']
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
-    renderer: path.join(__dirname, '../src/renderer/main.js')
+    index: path.join(__dirname, '../src/renderer/main.js'),
+    bg: path.join(__dirname, '../src/renderer/background.js')
   },
   externals: [
     ...Object.keys(dependencies || {}).filter(d => !whiteListedModules.includes(d))
@@ -110,18 +111,6 @@ let rendererConfig = {
   },
   plugins: [
     new ExtractTextPlugin('styles.css'),
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.resolve(__dirname, '../src/index.ejs'),
-      minify: {
-        collapseWhitespace: true,
-        removeAttributeQuotes: true,
-        removeComments: true
-      },
-      nodeModules: process.env.NODE_ENV !== 'production'
-        ? path.resolve(__dirname, '../node_modules')
-        : false
-    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   ],
@@ -139,6 +128,23 @@ let rendererConfig = {
   },
   target: 'electron-renderer'
 }
+
+Object.keys(rendererConfig.entry).forEach(key => {
+  const plugin = new HtmlWebpackPlugin({
+    filename: key + '.html',
+    template: path.resolve(__dirname, `../src/${key}.ejs`),
+    minify: {
+      collapseWhitespace: true,
+      removeAttributeQuotes: true,
+      removeComments: true
+    },
+    chunks: ['vendor', key, 'components'],
+    nodeModules: process.env.NODE_ENV !== 'production'
+      ? path.resolve(__dirname, '../node_modules')
+      : false
+  })
+  rendererConfig.plugins.push(plugin)
+})
 
 /**
  * Adjust rendererConfig for development settings

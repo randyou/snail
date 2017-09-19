@@ -3,6 +3,7 @@
 import { app, BrowserWindow, Menu } from 'electron'
 import ipc from './ipc'
 import template from './menuTemplate'
+import notifycation from './notification'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -20,6 +21,7 @@ function onReady () {
   createWindow()
   ipc()
   createMenu()
+  notifycation.init()
 }
 
 function createWindow () {
