@@ -94,7 +94,7 @@ function resumeDownload (e) {
   })
 }
 
-export default function () {
+function init () {
   // 开始新的torrent
   ipcMain.on('new-torrenting', (e, torrentIds) => {
     if (torrentIds.length > 0) {
@@ -262,4 +262,8 @@ export default function () {
       console.log(err)
     })
   })
+}
+
+export default{
+  init
 }

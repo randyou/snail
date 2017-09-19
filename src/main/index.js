@@ -19,7 +19,7 @@ const winURL = process.env.NODE_ENV === 'development'
 
 function onReady () {
   createWindow()
-  ipc()
+  ipc.init()
   createMenu()
   notifycation.init()
 }
