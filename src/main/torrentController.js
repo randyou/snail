@@ -120,5 +120,26 @@ export default {
    */
   async getDeletedList () {
     return db.getDeletedState()
+  },
+
+  /**
+   *
+   * onProgress
+   * @param {any} win
+   */
+  onProgress (win) {
+    (function progress () {
+      if (!win) {
+        return
+      }
+      setTimeout(() => {
+        if (webtorrentClient.torrents.length > 0) {
+          win.setProgressBar(webtorrentClient.progress)
+        } else {
+          win.setProgressBar(-1)
+        }
+        progress()
+      }, 1000)
+    })()
   }
 }

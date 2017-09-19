@@ -1,4 +1,5 @@
 import { BrowserWindow } from 'electron'
+import torrentController from './torrentController'
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/bg.html`
@@ -15,7 +16,7 @@ export default {
       defaultEncoding: 'utf-8',
       show: false
     })
-
+    torrentController.onProgress(backgroundWindow)
     backgroundWindow.loadURL(winURL)
 
     backgroundWindow.on('closed', () => {
