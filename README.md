@@ -1,6 +1,10 @@
-# snail
+[![Build status](https://ci.appveyor.com/api/projects/status/1epqk0lh67y4lpcc?svg=true)](https://ci.appveyor.com/project/randyou/snail)
 
-> A fast downloader.
+[![codebeat badge](https://codebeat.co/badges/3508105c-7204-492f-a210-7631e2c63a8f)](https://codebeat.co/projects/github-com-randyou-snail-master)
+
+# Snail
+
+**A fast torrent downloader.**
 
 #### Build Setup
 
@@ -17,9 +21,12 @@ npm run build
 
 # lint all JS/Vue component files in `src/`
 npm run lint
-
 ```
 
----
+####Skill stack
 
-This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue)@[a01d4d6](https://github.com/SimulatedGREG/electron-vue/tree/a01d4d68edff32c432273320f7df716234f56146) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
+> Node.js
+>
+> Vue.js + veux + router
+>
+> Electron
