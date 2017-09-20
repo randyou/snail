@@ -1,6 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/1epqk0lh67y4lpcc?svg=true)](https://ci.appveyor.com/project/randyou/snail)
-
-[![codebeat badge](https://codebeat.co/badges/3508105c-7204-492f-a210-7631e2c63a8f)](https://codebeat.co/projects/github-com-randyou-snail-master)
+<a href="https://ci.appveyor.com/project/randyou/snail"><image src="https://ci.appveyor.com/api/projects/status/1epqk0lh67y4lpcc?svg=true"></a>  <a href="https://codebeat.co/projects/github-com-randyou-snail-master"><image src="https://codebeat.co/badges/3508105c-7204-492f-a210-7631e2c63a8f"></a>
 
 # Snail
 
@@ -23,10 +21,8 @@ npm run build
 npm run lint
 ```
 
-####Skill stack
+#### Skill stack
 
-> Node.js
->
-> Vue.js + veux + router
->
-> Electron
+- Node.js
+- Vue.js + veux + router
+- Electron
