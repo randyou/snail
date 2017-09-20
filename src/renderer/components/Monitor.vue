@@ -7,8 +7,8 @@
 
 <script>
 import { mapActions } from 'vuex'
-import Progresser from './monitor/Progresser'
-import Launcher from './monitor/Launcher'
+import Progresser from './Monitor/Progresser'
+import Launcher from './Monitor/Launcher'
 
 export default {
   name: 'monitor',
