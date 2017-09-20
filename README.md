@@ -4,6 +4,8 @@
 
 **A fast torrent downloader.**
 
+![effect-1](https://github.com/randyou/resource/blob/master/snail/effect-1.png?raw=true)
+
 #### Build Setup
 
 ``` bash
