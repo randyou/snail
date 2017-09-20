@@ -18,8 +18,8 @@
 </template>
 
 <script>
-import Headbar from './index/Headbar'
-import Sidebar from './index/Sidebar'
+import Headbar from './Index/Headbar'
+import Sidebar from './Index/Sidebar'
 
 export default {
   name: 'index',
