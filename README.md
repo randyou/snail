@@ -1,4 +1,4 @@
-<a href="https://ci.appveyor.com/project/randyou/snail"><image src="https://ci.appveyor.com/api/projects/status/1epqk0lh67y4lpcc?svg=true"></a>  <a href="https://codebeat.co/projects/github-com-randyou-snail-master"><image src="https://codebeat.co/badges/3508105c-7204-492f-a210-7631e2c63a8f"></a>
+<a href="https://travis-ci.org/randyou/snail"><image src="https://travis-ci.org/randyou/snail.svg?branch=master"></a>  <a href="https://ci.appveyor.com/project/randyou/snail"><image src="https://ci.appveyor.com/api/projects/status/1epqk0lh67y4lpcc?svg=true"></a>  <a href="https://codebeat.co/projects/github-com-randyou-snail-master"><image src="https://codebeat.co/badges/3508105c-7204-492f-a210-7631e2c63a8f"></a>
 
 # Snail
 
