@@ -16,6 +16,10 @@ const vm = new Vue({
 })
 vm.$mount('#app')
 
+window.ondragstart = () => {
+  return false
+}
+
 window.ondragover = (e) => {
   e.preventDefault()
   return false
