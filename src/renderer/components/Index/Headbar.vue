@@ -5,7 +5,7 @@
     <div class="level-left">
       <div class="level-item">
         <figure class="image logo">
-          <img :src="logoUrl">
+          <img src="static/imgs/logo.png">
         </figure>
         <h1 class="title is-2">
           Snail
@@ -35,16 +35,10 @@
 </template>
 
 <script>
-import path from 'path'
+// import path from 'path'
 
 export default {
   name: 'headbar',
-  computed: {
-    logoUrl () {
-      const logo = this.$electron.nativeImage.createFromPath(path.join(__dirname, '../../assets/logo.png'))
-      return logo.toDataURL()
-    }
-  },
   methods: {
     openGithub () {
       this.$electron.shell.openExternal('https://github.com/randyou/snail')
