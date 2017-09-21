@@ -71,7 +71,7 @@ export default {
       if (!name && this.progressInfo && this.progressInfo.files.length > 0) {
         name = this.progressInfo.files[0].path.split('/')[0]
       }
-      return name || 'Loading ...'
+      return name || '[Loading ...]'
     },
     downloadSpeed () {
       if (!this.progressInfo) {

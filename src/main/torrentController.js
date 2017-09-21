@@ -109,7 +109,7 @@ export default {
     if (!state) {
       return
     }
-    removeData && shell.moveItemToTrash(path.join(state.path, state.displayName))
+    removeData && state.displayName && shell.moveItemToTrash(path.join(state.path, state.displayName))
     return db.removeTorrentState(state)
   },
 

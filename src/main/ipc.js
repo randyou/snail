@@ -1,6 +1,9 @@
 import { ipcMain } from 'electron'
+import parseTorrent from 'parse-torrent'
+import fs from 'fs'
 
 import torrentController from './torrentController'
+import TorrentState from './torrentState'
 
 let progress = false
 
@@ -102,7 +105,16 @@ function onNewTorrenting () {
   ipcMain.on('new-torrenting', (e, torrentIds) => {
     if (torrentIds.length > 0) {
       for (let torrentId of torrentIds) {
-        torrentController.startTorrenting(torrentId, {}, (state) => {
+        const torrentInfo = torrentId.endsWith('.torrent') ? parseTorrent(fs.readFileSync(torrentId)) : parseTorrent(torrentId)
+        const state = new TorrentState({
+          infoHash: torrentInfo.infoHash,
+          displayName: torrentInfo.name,
+          totalLength: torrentInfo.length})
+        torrentController.saveTorrentState(state)
+        sendDownloadList(e)
+        torrentController.startTorrenting(state.infoHash, {
+          displayName: state.displayName
+        }, (state) => {
           if (state.status === 'done') {
             sendDoneList(e)
           }

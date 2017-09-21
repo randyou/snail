@@ -1,5 +1,5 @@
 import utils from './utils'
-
+import config from './config'
 /**
  * 下载状态
  *
@@ -9,13 +9,13 @@ import utils from './utils'
 export default class TorrentState {
   constructor (torrent) {
     this.status = 'downloading'
-    this.infoHash = torrent.infoHash
-    this.magnetURI = torrent.magnetURI
+    this.infoHash = torrent.infoHash || 0
+    this.magnetURI = torrent.magnetURI || ''
     this.torrentName = ''
-    this.progress = torrent.progress
-    this.downloaded = torrent.downloaded
-    this.path = torrent.path
-    this.files = torrent.files.map(file => {
+    this.progress = torrent.progress || 0
+    this.downloaded = torrent.downloaded || 0
+    this.path = torrent.path || config.prevDownloadsDir
+    this.files = torrent.files ? torrent.files.map(file => {
       return {
         name: file.name,
         path: file.path,
@@ -23,8 +23,8 @@ export default class TorrentState {
         downloaded: file.downloaded,
         progress: file.progress
       }
-    })
-    this.displayName = this.files.length > 0 ? this.files[0].path.split(require('path').sep)[0] : undefined
-    this.totalLength = utils.calculateTotalLength(torrent.files)
+    }) : null
+    this.displayName = torrent.displayName || (this.files && this.files.length > 0 ? this.files[0].path.split(require('path').sep)[0] : undefined)
+    this.totalLength = torrent.totalLength || utils.calculateTotalLength(torrent.files)
   }
 }

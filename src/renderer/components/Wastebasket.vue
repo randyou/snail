@@ -4,7 +4,7 @@
       <tr v-for="row in deletedList" :key="row.infoHash" :data-infohash="row.infoHash">
         <th></th>
         <td>
-          <a :title="row.displayName">{{row.displayName}}</a>
+          <a :title="row.displayName||'[Unknown]'">{{row.displayName||'[Unknown]'}}</a>
         </td>
       </tr>
     </tbody>
@@ -42,18 +42,24 @@ export default {
       const ipcRenderer = vm.$electron.ipcRenderer
 
       var menu = new Menu()
-      menu.append(new MenuItem({ label: '恢复任务',
+      menu.append(new MenuItem({
+        label: '恢复任务',
         click: function () {
           ipcRenderer.send('resume-deleted', vm.operateInfoHash)
-        } }))
-      menu.append(new MenuItem({ label: '删除记录',
+        }
+      }))
+      menu.append(new MenuItem({
+        label: '删除记录',
         click: function () {
           ipcRenderer.send('delete-deleted', vm.operateInfoHash)
-        } }))
-      menu.append(new MenuItem({ label: '彻底删除',
+        }
+      }))
+      menu.append(new MenuItem({
+        label: '彻底删除',
         click: function () {
           ipcRenderer.send('remove-deleted', vm.operateInfoHash)
-        }}))
+        }
+      }))
 
       this.$refs.table.addEventListener('contextmenu', function (e) {
         e.preventDefault()
