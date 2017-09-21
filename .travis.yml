@@ -37,9 +37,9 @@ deploy:
     secure: $GH_TOKEN
   file_glob: true
   file:
-    build/dist/snail-*
-    build/dist/snail_*
-    build/dist/Snail-*
+    build/snail-*
+    build/snail_*
+    build/Snail-*
   skip_cleanup: true
   on:
     tags: true
