@@ -129,7 +129,7 @@ function onNewTorrenting () {
         }
         const state = new TorrentState({
           infoHash: torrentInfo.infoHash,
-          displayName: torrentInfo.name,
+          name: torrentInfo.name,
           totalLength: torrentInfo.length})
         if (existState) {
           Object.assign(state, existState, {status: 'downloading'})
