@@ -101,16 +101,14 @@ function resumeDownload (e) {
 function onNewTorrenting () {
   ipcMain.on('new-torrenting', (e, torrentIds) => {
     if (torrentIds.length > 0) {
-      torrentController.getDownloadList().then(list => {
-        for (let torrentId of torrentIds) {
-          torrentController.startTorrenting(torrentId, {}, (state) => {
-            if (state.status === 'done') {
-              sendDoneList(e)
-            }
-            sendDownloadList(e)
-          })
-        }
-      })
+      for (let torrentId of torrentIds) {
+        torrentController.startTorrenting(torrentId, {}, (state) => {
+          if (state.status === 'done') {
+            sendDoneList(e)
+          }
+          sendDownloadList(e)
+        })
+      }
     }
   })
 }
