@@ -1,3 +1,5 @@
+import utils from './utils'
+
 /**
  * progress信息
  *
@@ -29,11 +31,6 @@ export default class Progress {
       }
     })
     this.displayName = torrent.files.length > 0 ? torrent.files[0].path.split(require('path').sep)[0] : undefined
-    this.totalLength = torrent.files.reduce((length, file) => {
-      if (file) {
-        length += file.length
-      }
-      return length
-    }, 0)
+    this.totalLength = utils.calculateTotalLength(torrent.files)
   }
 }

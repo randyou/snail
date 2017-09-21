@@ -1,3 +1,5 @@
+import utils from './utils'
+
 /**
  * 下载状态
  *
@@ -23,11 +25,6 @@ export default class TorrentState {
       }
     })
     this.displayName = this.files.length > 0 ? this.files[0].path.split(require('path').sep)[0] : undefined
-    this.totalLength = torrent.files.reduce((length, file) => {
-      if (file) {
-        length += file.length
-      }
-      return length
-    }, 0)
+    this.totalLength = utils.calculateTotalLength(torrent.files)
   }
 }
