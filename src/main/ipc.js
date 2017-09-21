@@ -112,7 +112,7 @@ function onNewTorrenting () {
           totalLength: torrentInfo.length})
         torrentController.saveTorrentState(state)
         sendDownloadList(e)
-        torrentController.startTorrenting(state.infoHash, {
+        torrentController.startTorrenting(torrentId, {
           displayName: state.displayName
         }, (state) => {
           if (state.status === 'done') {
