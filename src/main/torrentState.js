@@ -24,7 +24,7 @@ export default class TorrentState {
         progress: file.progress
       }
     }) : null
-    this.displayName = torrent.displayName || (this.files && this.files.length > 0 ? this.files[0].path.split(require('path').sep)[0] : undefined)
+    this.displayName = torrent.name
     this.totalLength = torrent.totalLength || utils.calculateTotalLength(torrent.files)
   }
 }
