@@ -94,8 +94,11 @@ function resumeDownload (e) {
   })
 }
 
-function init () {
-  // 开始新的torrent
+/**
+ * 开始新的torrent
+ *
+ */
+function onNewTorrenting () {
   ipcMain.on('new-torrenting', (e, torrentIds) => {
     if (torrentIds.length > 0) {
       torrentController.getDownloadList().then(list => {
@@ -110,11 +113,23 @@ function init () {
       })
     }
   })
-  // 获取下载状态
+}
+
+/**
+ * 获取下载状态
+ *
+ */
+function onDownloadList () {
   ipcMain.on('download-list', (e) => {
     sendDownloadList(e)
   })
-  // 开始发送progress
+}
+
+/**
+ * 开始发送progress
+ *
+ */
+function onStartProgress () {
   ipcMain.on('start-progress', (e) => {
     progress = true
     if (progress) {
@@ -122,12 +137,24 @@ function init () {
       sendProgress(e)
     }
   })
-  // 停止发送progress
+}
+
+/**
+ * 停止发送progress
+ *
+ */
+function onStropProgress () {
   ipcMain.on('stop-progress', (e) => {
     progress = false
     clearTimeout()
   })
-  // 停止下载
+}
+
+/**
+ * 停止下载
+ *
+ */
+function onStopTorrenting () {
   ipcMain.on('stop-torrenting', (e, torrentId) => {
     const progress = torrentController.getProgress().find((progress) => {
       return progress.infoHash === torrentId
@@ -148,8 +175,13 @@ function init () {
       torrentController.stopTorrenting(torrentId)
     })
   })
+}
 
-  // 恢复下载
+/**
+ * 恢复下载
+ *
+ */
+function onResumeTorrenting () {
   ipcMain.on('resume-torrenting', (e, torrentId) => {
     torrentController.getDownloadList().then(list => {
       const state = list.find(state => state.infoHash === torrentId)
@@ -160,11 +192,13 @@ function init () {
       })
     })
   })
+}
 
-  ipcMain.on('done-list', (e) => {
-    sendDoneList(e)
-  })
-
+/**
+ * 删除正在下载的任务
+ *
+ */
+function onDeleteTorrent () {
   ipcMain.on('delete-torrent', (e, torrentId) => {
     const progress = torrentController.getProgress().find((progress) => {
       return progress.infoHash === torrentId
@@ -184,7 +218,23 @@ function init () {
       sendDownloadList(e)
     })
   })
+}
 
+/**
+ * 获取已完成列表
+ *
+ */
+function onDoneList () {
+  ipcMain.on('done-list', (e) => {
+    sendDoneList(e)
+  })
+}
+
+/**
+ * 删除数据
+ *
+ */
+function onRemoveTorrent () {
   ipcMain.on('remove-torrent', (e, torrentId) => {
     torrentController.getDownloadList().then(list => {
       const state = list.find(state => {
@@ -198,7 +248,13 @@ function init () {
       })
     })
   })
+}
 
+/**
+ * 删除已完成任务
+ *
+ */
+function onDeleteDone () {
   ipcMain.on('delete-done', (e, torrentId) => {
     torrentController.getDoneList().then(list => {
       const state = list.find(state => state.infoHash === torrentId)
@@ -210,7 +266,13 @@ function init () {
       })
     })
   })
+}
 
+/**
+ * 从已完成列表删除数据
+ *
+ */
+function onRemoveDone () {
   ipcMain.on('remove-done', (e, torrentId) => {
     torrentController.getDoneList().then((list) => {
       const state = list.find(state => state.infoHash === torrentId)
@@ -221,11 +283,23 @@ function init () {
       })
     })
   })
+}
 
+/**
+ * 获取已删除列表
+ *
+ */
+function onDeletedList () {
   ipcMain.on('deleted-list', (e) => {
     sendDeletedList(e)
   })
+}
 
+/**
+ * 恢复任务
+ *
+ */
+function onResumeDeleted () {
   ipcMain.on('resume-deleted', (e, torrentId) => {
     torrentController.getDeletedList().then(list => {
       const state = list.find(state => state.infoHash === torrentId)
@@ -236,7 +310,13 @@ function init () {
       })
     })
   })
+}
 
+/**
+ * 从废纸篓中删除
+ *
+ */
+function onDeleteDeleted () {
   ipcMain.on('delete-deleted', (e, torrentId) => {
     torrentController.getDeletedList().then((list) => {
       const state = list.find(state => state.infoHash === torrentId)
@@ -249,7 +329,13 @@ function init () {
       console.log(err)
     })
   })
+}
 
+/**
+ * 从废纸篓中删除数据
+ *
+ */
+function onRemoveDeleted () {
   ipcMain.on('remove-deleted', (e, torrentId) => {
     torrentController.getDeletedList().then((list) => {
       const state = list.find(state => state.infoHash === torrentId)
@@ -265,5 +351,21 @@ function init () {
 }
 
 export default{
-  init
+  init () {
+    onNewTorrenting()
+    onDownloadList()
+    onStartProgress()
+    onStropProgress()
+    onStopTorrenting()
+    onResumeTorrenting()
+    onDoneList()
+    onDeleteTorrent()
+    onRemoveTorrent()
+    onDeleteDone()
+    onRemoveDone()
+    onDeletedList()
+    onResumeDeleted()
+    onDeleteDeleted()
+    onRemoveDeleted()
+  }
 }
