@@ -65,7 +65,7 @@ export default {
   },
 
   getDoneList () {
-    return db.getDoneState()
+    return db.getDoneStates()
   },
 
   /**
@@ -119,7 +119,17 @@ export default {
    * @returns
    */
   async getDeletedList () {
-    return db.getDeletedState()
+    return db.getDeletedStates()
+  },
+
+  /**
+   * 获取一条state
+   *
+   * @param {any} torrentId
+   * @returns
+   */
+  getOneState (torrentId) {
+    return db.getOneState({infoHash: torrentId})
   },
 
   /**

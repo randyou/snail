@@ -51,8 +51,8 @@ export default {
    *
    * @returns
    */
-  getDoneState () {
-    return this.getState({ status: 'done' }, { updateAt: -1 })
+  getDoneStates () {
+    return this.getStates({ status: 'done' }, { updateAt: -1 })
   },
 
   /**
@@ -60,8 +60,8 @@ export default {
    *
    * @returns
    */
-  getDeletedState () {
-    return this.getState({ status: 'deleted' }, { updateAt: -1 })
+  getDeletedStates () {
+    return this.getStates({ status: 'deleted' }, { updateAt: -1 })
   },
   /**
    * 获取state
@@ -70,7 +70,7 @@ export default {
    * @param {any} [sort={}]
    * @returns
    */
-  getState (opts = {}, sort = {}) {
+  getStates (opts = {}, sort = {}) {
     return new Promise((resolve, reject) => {
       db.torrentState.find(opts)
         .sort(sort)
@@ -81,6 +81,23 @@ export default {
             resolve(docs)
           }
         })
+    })
+  },
+  /**
+   * 获取一条state
+   *
+   * @param {any} [opts={}]
+   * @returns
+   */
+  getOneState (opts = {}) {
+    return new Promise((resolve, reject) => {
+      db.torrentState.findOne(opts, (err, docs) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(docs)
+        }
+      })
     })
   },
   /**

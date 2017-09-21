@@ -70,6 +70,15 @@ function sendDeletedList (e) {
 }
 
 /**
+ * 发送已经存在任务提醒
+ *
+ * @param {any} e
+ */
+function sendExistedTorrent (e, state) {
+  e.sender.send('existed-torrent', state.status)
+}
+
+/**
  * 恢复下载状态
  *
  * @param {any} e
@@ -102,14 +111,29 @@ function resumeDownload (e) {
  *
  */
 function onNewTorrenting () {
-  ipcMain.on('new-torrenting', (e, torrentIds) => {
+  ipcMain.on('new-torrenting', async (e, torrentIds) => {
     if (torrentIds.length > 0) {
       for (let torrentId of torrentIds) {
         const torrentInfo = torrentId.endsWith('.torrent') ? parseTorrent(fs.readFileSync(torrentId)) : parseTorrent(torrentId)
+        let existState
+        try {
+          existState = await torrentController.getOneState(torrentInfo.infoHash)
+        } catch (error) {
+          console.log(error)
+        }
+        if (existState) {
+          sendExistedTorrent(e, existState)
+        }
+        if (torrentController.getTorrent(torrentInfo.infoHash)) {
+          return
+        }
         const state = new TorrentState({
           infoHash: torrentInfo.infoHash,
           displayName: torrentInfo.name,
           totalLength: torrentInfo.length})
+        if (existState) {
+          Object.assign(state, existState, {status: 'downloading'})
+        }
         torrentController.saveTorrentState(state)
         sendDownloadList(e)
         torrentController.startTorrenting(torrentId, {

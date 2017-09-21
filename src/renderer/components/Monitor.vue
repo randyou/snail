@@ -27,6 +27,25 @@ export default {
     this.$electron.ipcRenderer.on('progress', (e, data) => {
       this.updateProgressList(data)
     })
+    this.$electron.ipcRenderer.on('existed-torrent', (e, status) => {
+      let msg = '任务已经存在，将自动继续下载。'
+      switch (status) {
+        case 'deleted':
+          msg = '废纸篓中发现相同任务，将自动恢复为下载状态。'
+          break
+        case 'done':
+          msg = '发现已完成的相同任务，将自动恢复为下载状态。'
+          break
+        default:
+          break
+      }
+      this.$electron.remote.dialog.showMessageBox(this.$electron.remote.getCurrentWindow(), {
+        title: 'Info',
+        message: msg,
+        buttons: ['ok'],
+        defaultId: 0
+      })
+    })
   },
   mounted () {
     this.createMenu()
