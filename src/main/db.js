@@ -52,17 +52,7 @@ export default {
    * @returns
    */
   getDoneState () {
-    return new Promise((resolve, reject) => {
-      db.torrentState.find({ status: 'done' })
-        .sort({ updateAt: -1 })
-        .exec((err, docs) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(docs)
-          }
-        })
-    })
+    return this.getState({ status: 'done' }, { updateAt: -1 })
   },
 
   /**
@@ -71,9 +61,19 @@ export default {
    * @returns
    */
   getDeletedState () {
+    return this.getState({ status: 'deleted' }, { updateAt: -1 })
+  },
+  /**
+   * 获取state
+   *
+   * @param {any} [opts={}]
+   * @param {any} [sort={}]
+   * @returns
+   */
+  getState (opts = {}, sort = {}) {
     return new Promise((resolve, reject) => {
-      db.torrentState.find({ status: 'deleted' })
-        .sort({ updateAt: -1 })
+      db.torrentState.find(opts)
+        .sort(sort)
         .exec((err, docs) => {
           if (err) {
             reject(err)
