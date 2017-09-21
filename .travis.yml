@@ -31,6 +31,18 @@ install:
 - yarn
 script:
 - yarn run build
+deploy:
+  provider: releases
+  api_key:
+    secure: $GH_TOKEN
+  file_glob: true
+  file:
+    build/dist/snail-*
+    build/dist/snail_*
+    build/dist/Snail-*
+  skip_cleanup: true
+  on:
+    tags: true
 branches:
   only:
   - master
