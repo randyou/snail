@@ -134,8 +134,9 @@ function onNewTorrenting () {
         if (existState) {
           Object.assign(state, existState, {status: 'downloading'})
         }
-        torrentController.saveTorrentState(state)
-        sendDownloadList(e)
+        torrentController.saveTorrentState(state).then(() => {
+          sendDownloadList(e)
+        })
         torrentController.startTorrenting(torrentId, {
           displayName: state.displayName
         }, (state) => {
