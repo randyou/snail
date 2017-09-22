@@ -35,7 +35,13 @@ function createWindow () {
     minWidth: 1000,
     minHeight: 580,
     defaultEncoding: 'utf-8',
-    title: 'Snail'
+    title: 'Snail',
+    show: false,
+    backgroundColor: '#ffdd57'
+  })
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
   })
 
   mainWindow.loadURL(winURL)
