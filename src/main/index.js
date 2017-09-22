@@ -4,6 +4,7 @@ import { app, BrowserWindow, Menu } from 'electron'
 import ipc from './ipc'
 import template from './menuTemplate'
 import notifycation from './notification'
+import tray from './tray'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -13,14 +14,28 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
 function onReady () {
+  const trayIcon = tray.createTray()
+
+  trayIcon.on('click', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore()
+      }
+      mainWindow.focus()
+    } else {
+      createWindow()
+    }
+  })
+
   createWindow()
-  ipc.init()
   createMenu()
+  ipc.init()
   notifycation.init()
 }
 
@@ -48,9 +63,6 @@ function createWindow () {
 
   mainWindow.on('closed', () => {
     mainWindow = null
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
   })
 }
 
@@ -81,7 +93,8 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) {
+  console.log('activave', mainWindow)
+  if (!mainWindow) {
     createWindow()
   }
 })
