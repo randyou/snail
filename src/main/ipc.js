@@ -2,6 +2,8 @@ import { ipcMain } from 'electron'
 import parseTorrent from 'parse-torrent'
 import fs from 'fs'
 
+import log from './log'
+import mainWin from './mainWindow'
 import torrentController from './torrentController'
 import TorrentState from './torrentState'
 
@@ -14,13 +16,11 @@ let progress = false
  */
 function sendProgress (e) {
   let data = torrentController.getProgress()
-  if (data.length > 0) {
+  if (mainWin.win && data.length > 0) {
     try {
-      if (e && e.sender) {
-        e.sender.send('progress', data)
-      }
+      e.sender.send('progress', data)
     } catch (error) {
-      console.log('[ipc Send progress error]', error)
+      log.logger.warn(error)
     }
   }
   if (progress) {
@@ -39,7 +39,7 @@ function sendDownloadList (e) {
   torrentController.getDownloadList().then((list) => {
     e.sender.send('download-list', list)
   }).catch(err => {
-    console.log(err)
+    log.logger.error(err)
   })
 }
 
@@ -52,7 +52,7 @@ function sendDoneList (e) {
   torrentController.getDoneList().then(list => {
     e.sender.send('done-list', list)
   }).catch(err => {
-    console.log(err)
+    log.logger.error(err)
   })
 }
 
@@ -65,7 +65,7 @@ function sendDeletedList (e) {
   torrentController.getDeletedList().then((list) => {
     e.sender.send('deleted-list', list)
   }).catch((err) => {
-    console.log(err)
+    log.logger.error(err)
   })
 }
 
@@ -102,7 +102,7 @@ function resumeDownload (e) {
       }
     }, this)
   }).catch(err => {
-    console.log(err)
+    log.logger.error(err)
   })
 }
 
@@ -279,7 +279,7 @@ function onRemoveTorrent () {
       torrentController.removeTorrentState(state).then(() => {
         sendDownloadList(e)
       }).catch((err) => {
-        console.log(err)
+        log.logger.error(err)
       })
     })
   })
@@ -297,7 +297,7 @@ function onDeleteDone () {
       torrentController.saveTorrentState(state).then(() => {
         sendDoneList(e)
       }).catch((err) => {
-        console.log(err)
+        log.logger.error(err)
       })
     })
   })
@@ -314,7 +314,7 @@ function onRemoveDone () {
       torrentController.removeTorrentState(state).then(() => {
         sendDoneList(e)
       }).catch((err) => {
-        console.log(err)
+        log.logger.error(err)
       })
     })
   })
@@ -358,10 +358,10 @@ function onDeleteDeleted () {
       torrentController.removeTorrentState(state, false).then(() => {
         sendDeletedList(e)
       }).catch((err) => {
-        console.log(err)
+        log.logger.error(err)
       })
     }).catch((err) => {
-      console.log(err)
+      log.logger.error(err)
     })
   })
 }
@@ -377,10 +377,10 @@ function onRemoveDeleted () {
       torrentController.removeTorrentState(state).then(() => {
         sendDeletedList(e)
       }).catch((err) => {
-        console.log(err)
+        log.logger.error(err)
       })
     }).catch((err) => {
-      console.log(err)
+      log.logger.error(err)
     })
   })
 }

@@ -1,8 +1,9 @@
 'use strict'
 
-import { app, Menu } from 'electron'
+import { app, Menu, dialog } from 'electron'
 import bgWin from './backgroundWindow'
 import ipc from './ipc'
+import log from './log'
 import mainWin from './mainWindow'
 import template from './menuTemplate'
 import tray from './tray'
@@ -52,6 +53,20 @@ app.on('activate', () => {
   if (!mainWin.win) {
     mainWin.createWindow()
   }
+})
+
+process.on('uncaughtException', (err) => {
+  log.logger.error(err)
+  log.shutdown().then(() => {
+    dialog.showMessageBox({
+      type: 'error',
+      title: 'Error',
+      message: err.toString(),
+      detail: err.toString()
+    }, () => {
+      app.exit(1)
+    })
+  })
 })
 
 /**

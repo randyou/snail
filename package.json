@@ -61,6 +61,7 @@
   "dependencies": {
     "bulma": "^0.5.1",
     "font-awesome": "^4.7.0",
+    "log4js": "^2.3.3",
     "nedb": "^1.8.0",
     "parse-torrent": "^5.8.3",
     "vue": "^2.3.3",
