@@ -15,19 +15,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 function onReady () {
-  const trayIcon = tray.createTray()
-
-  trayIcon.on('click', () => {
-    if (mainWin.win) {
-      if (mainWin.win.isMinimized()) {
-        mainWin.win.restore()
-      }
-      mainWin.win.focus()
-    } else {
-      mainWin.createWindow()
-    }
-  })
-
+  tray.createTray()
   mainWin.createWindow()
   bgWin.createWindow()
   createMenu()
