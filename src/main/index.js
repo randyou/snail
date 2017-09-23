@@ -1,9 +1,10 @@
 'use strict'
 
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, Menu } from 'electron'
+import bgWin from './backgroundWindow'
 import ipc from './ipc'
+import mainWin from './mainWindow'
 import template from './menuTemplate'
-import notifycation from './notification'
 import tray from './tray'
 /**
  * Set `__static` path to static files in production
@@ -13,57 +14,12 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-let mainWindow
-
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
-
 function onReady () {
-  const trayIcon = tray.createTray()
-
-  trayIcon.on('click', () => {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) {
-        mainWindow.restore()
-      }
-      mainWindow.focus()
-    } else {
-      createWindow()
-    }
-  })
-
-  createWindow()
+  tray.createTray()
+  mainWin.createWindow()
+  bgWin.createWindow()
   createMenu()
   ipc.init()
-  notifycation.init()
-}
-
-function createWindow () {
-  /**
-   * Initial window options
-   */
-  mainWindow = new BrowserWindow({
-    height: 580,
-    useContentSize: true,
-    width: 1000,
-    minWidth: 1000,
-    minHeight: 580,
-    defaultEncoding: 'utf-8',
-    title: 'Snail',
-    show: false,
-    backgroundColor: '#ffdd57'
-  })
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
-  })
-
-  mainWindow.loadURL(winURL)
-
-  mainWindow.on('closed', () => {
-    mainWindow = null
-  })
 }
 
 function createMenu () {
@@ -72,11 +28,11 @@ function createMenu () {
 }
 
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
-  if (mainWindow) {
-    if (mainWindow.isMinimized()) {
-      mainWindow.restore()
+  if (mainWin.win) {
+    if (mainWin.win.isMinimized()) {
+      mainWin.win.restore()
     }
-    mainWindow.focus()
+    mainWin.win.focus()
   }
 })
 
@@ -93,9 +49,8 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  console.log('activave', mainWindow)
-  if (!mainWindow) {
-    createWindow()
+  if (!mainWin.win) {
+    mainWin.createWindow()
   }
 })
 

@@ -1,28 +1,37 @@
 import { BrowserWindow } from 'electron'
-import torrentController from './torrentController'
+import dock from './dock'
+
+const bgWin = {
+  createWindow,
+  win: null
+}
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080/bg.html`
   : `file://${__dirname}/bg.html`
 
-export default {
-  createWindow () {
-    /**
+function createWindow () {
+  /**
      * Initial window options
      */
-    let backgroundWindow = new BrowserWindow({
-      height: 0,
-      width: 0,
-      defaultEncoding: 'utf-8',
-      show: false
-    })
-    torrentController.onProgress(backgroundWindow)
-    backgroundWindow.loadURL(winURL)
+  const win = bgWin.win = new BrowserWindow({
+    height: 0,
+    width: 0,
+    defaultEncoding: 'utf-8',
+    show: false
+  })
 
-    backgroundWindow.on('closed', () => {
-      backgroundWindow = null
-    })
+  win.loadURL(winURL)
 
-    return backgroundWindow
-  }
+  win.once('ready-to-show', () => {
+    dock.setProgress()
+  })
+
+  win.on('closed', () => {
+    bgWin.win = null
+  })
+
+  return win
 }
+
+export default bgWin

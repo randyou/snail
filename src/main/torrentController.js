@@ -2,11 +2,12 @@ import WebTorrent from 'webtorrent'
 import {shell} from 'electron'
 import path from 'path'
 
+import bgWin from './backgroundWindow'
 import config from './config'
-import TorrentState from './torrentState'
-import Progress from './progress'
 import db from './db'
 import notification from './notification'
+import Progress from './progress'
+import TorrentState from './torrentState'
 
 const downloadsDir = config.prevDownloadsDir
 
@@ -137,16 +138,16 @@ export default {
    * onProgress
    * @param {any} win
    */
-  onProgress (win) {
+  onProgress () {
     (function progress () {
-      if (!win) {
+      if (!bgWin.win) {
         return
       }
       setTimeout(() => {
         if (webtorrentClient.torrents.length > 0) {
-          win.setProgressBar(webtorrentClient.progress)
+          bgWin.win.setProgressBar(webtorrentClient.progress)
         } else {
-          win.setProgressBar(-1)
+          bgWin.win.setProgressBar(-1)
         }
         progress()
       }, 1000)
