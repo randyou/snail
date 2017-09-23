@@ -1,12 +1,7 @@
-import backgroundWindow from './backgroundWindow'
-
-let bg
+import bgWin from './backgroundWindow'
 
 export default {
-  init () {
-    bg = backgroundWindow.createWindow()
-  },
   notify (title, content, state) {
-    bg && bg.webContents.send('notify', { title, content, state })
+    bgWin.win && bgWin.win.webContents.send('notify', { title, content, state })
   }
 }

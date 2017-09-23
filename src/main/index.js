@@ -1,9 +1,9 @@
 'use strict'
 
 import { app, BrowserWindow, Menu } from 'electron'
+import bgWin from './backgroundWindow'
 import ipc from './ipc'
 import template from './menuTemplate'
-import notifycation from './notification'
 import tray from './tray'
 /**
  * Set `__static` path to static files in production
@@ -34,9 +34,9 @@ function onReady () {
   })
 
   createWindow()
+  bgWin.createWindow()
   createMenu()
   ipc.init()
-  notifycation.init()
 }
 
 function createWindow () {
@@ -93,7 +93,6 @@ app.on('window-all-closed', () => {
 })
 
 app.on('activate', () => {
-  console.log('activave', mainWindow)
   if (!mainWindow) {
     createWindow()
   }
